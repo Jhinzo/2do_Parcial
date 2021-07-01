@@ -1,0 +1,205 @@
+﻿@page "/C_Ventas"
+@using _2do_Parcial.Models
+@using _2do_Parcial.BLL
+
+@inject IToastService toast
+
+<div class="card">
+
+    <div class="card-header text-center bg-info text-white">
+        <h3>Consulta de Ventas</h3>
+    </div>
+
+    <div class="card-body">
+        <div class="form-group">
+            <div class="form-row">
+                <div class="input-group">
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="Criterio" @bind="criterio" />
+                    </div>
+
+                    <div class="col">
+                        <select class="form-control" @bind="filtro">
+                            <option value="0">Todos</option>
+                            <option value="1">Id</option>
+                            <option value="2">Fecha</option>
+                            <option value="3">Monto</option>
+                            <option value="4">ClienteId</option>
+                            <option value="5">Balance</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-primary" @onclick="Consultar">Consultar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-striped table-dark">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Fecha</th>
+                <th>ClienteId</th>
+                <th>Monto</th>
+                <th>Balance</th>
+                <th>  </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in lista)
+            {
+                <tr>
+                    <td>@item.VentaId</td>
+                    <td>@item.Fecha</td>
+                    <td>@item.ClienteId</td>
+                    <td>@item.Monto</td>
+                    <td>@item.Balance</td>
+                    <button type="button" class="btn btn-dark" href="/cobro/@item.VentaId">Buscar</button>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+
+</div>
+
+@code {
+
+    public int filtro { get; set; }
+    public string criterio { get; set; }
+    public List<Ventas> lista = new List<Ventas>();
+
+
+
+    private void Consultar()
+    {
+        try
+        {
+            switch (filtro)
+            {
+                case 0: //Todos
+                    this.lista = VentasBLL.GetList(p => true);
+                    break;
+                case 1: //Id
+                    int ID = GetId();
+                    this.lista = VentasBLL.GetList(p => p.VentaId == ID);
+                    break;
+                case 2: //Fecha
+                    DateTime fecha = GetFecha();
+                    this.lista = VentasBLL.GetList(p => p.Fecha == fecha);
+                    break;
+                case 3: //Monto
+                    double monto = GetMonto();
+                    this.lista = VentasBLL.GetList(p => p.Monto == monto);
+                    break;
+                case 4: //ClienteId
+                    int clienteId = GetClienteId();
+                    this.lista = VentasBLL.GetList(p => p.ClienteId == clienteId);
+                    break;
+                case 5://Balance
+                    double balance = GetBalance();
+                    this.lista = VentasBLL.GetList(p => p.Balance == balance);
+                    break;
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+    private int GetId()
+    {
+        int resultado = 0;
+
+        try
+        {
+            resultado = Convert.ToInt32(criterio);
+            return resultado;
+        }
+        catch (Exception)
+        {
+
+            toast.ShowError("El Id debe ser numerico..");
+        }
+
+        return resultado;
+    }
+
+    private DateTime GetFecha()
+    {
+        DateTime fecha = DateTime.Now;
+        try
+        {
+            fecha = Convert.ToDateTime(criterio);
+            return fecha;
+        }
+        catch (Exception)
+        {
+
+            toast.ShowError("La fecha debe ser numerico..");
+        }
+
+        return fecha;
+    }
+
+    private double GetMonto()
+    {
+        double monto = 0;
+
+        try
+        {
+            monto = Convert.ToDouble(criterio);
+            return monto;
+        }
+        catch (Exception)
+        {
+
+            toast.ShowError("La monto debe ser numerico..");
+        }
+
+        return monto;
+    }
+
+    private int GetClienteId()
+    {
+        int clienteId = 0;
+
+        try
+        {
+            clienteId = Convert.ToInt32(criterio);
+            return clienteId;
+        }
+        catch (Exception)
+        {
+
+            toast.ShowError("El ClienteId debe ser numerico..");
+        }
+
+        return clienteId;
+    }
+
+    private double GetBalance()
+    {
+        double balance = 0;
+
+        try
+        {
+            balance = Convert.ToDouble(criterio);
+            return balance;
+        }
+        catch (Exception)
+        {
+
+            toast.ShowError("El balance debe ser numerico..");
+        }
+
+        return balance;
+    }
+
+
+}
